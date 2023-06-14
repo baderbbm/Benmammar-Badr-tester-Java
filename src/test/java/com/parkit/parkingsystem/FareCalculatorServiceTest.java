@@ -127,6 +127,12 @@ public class FareCalculatorServiceTest {
         assertEquals((24 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
     }
   
+    /*
+    vérifie si la méthode "calculateFare" du service "fareCalculatorService" 
+    calcule correctement le tarif de stationnement pour une voiture 
+    lorsque le temps de stationnement est inférieur à 30 minutes et que le prix calculé est égal à 0
+    */   
+    
     @Test
     public void calculateFareCarWithLessThan30MinutesParkingTime() {
     // Créer une date d'entrée il y a moins de 30 minutes
@@ -148,10 +154,14 @@ public class FareCalculatorServiceTest {
     fareCalculatorService.calculateFare(ticket);
 
     // Vérifier que le prix calculé est égal à 0
-    assertEquals(0, ticket.getPrice()); // Utilisez une marge d'erreur (delta) pour les comparaisons de nombres à virgule flottante
+    assertEquals(0, ticket.getPrice()); 
 }
-
-   
+/*
+    vérifie si la méthode "calculateFare" du service "fareCalculatorService" 
+    calcule correctement le tarif de stationnement pour une moto 
+    lorsque le temps de stationnement est inférieur à 30 minutes et que le prix calculé est égal à 0
+  */   
+    
 @Test
     public void calculateFareBikeWithLessThan30MinutesParkingTime() {
     // Créer une date d'entrée il y a moins de 30 minutes
@@ -173,10 +183,16 @@ public class FareCalculatorServiceTest {
     fareCalculatorService.calculateFare(ticket);
 
     // Vérifier que le prix calculé est égal à 0
-    assertEquals(0, ticket.getPrice()); // Utilisez une marge d'erreur (delta) pour les comparaisons de nombres à virgule flottante
+    assertEquals(0, ticket.getPrice()); 
 }
 
-
+/*
+    vérifie si la méthode "calculateFare" du service "fareCalculatorService" 
+    calcule correctement le tarif de stationnement pour une voiture lorsque le temps de stationnement 
+    est supérieur à 30 minutes et que le prix calculé est strictement supérieur à 0.
+*/
+    
+    
 public void calculateFareCarWithMoreThan30MinutesParkingTime() {
     // Créer une date d'entrée il y a plus de 30 minutes
     Date inTime = new Date(System.currentTimeMillis() - (31 * 60 * 1000));
@@ -199,6 +215,13 @@ public void calculateFareCarWithMoreThan30MinutesParkingTime() {
     // Vérifier que le prix calculé est supérieur à 0
     assertTrue(ticket.getPrice() > 0);
 }
+
+/*
+    vérifie si la méthode "calculateFare" du service "fareCalculatorService" 
+    calcule correctement le tarif de stationnement pour une moto lorsque le temps de stationnement 
+    est supérieur à 30 minutes et que le prix calculé est strictement supérieur à 0.
+*/
+   
 
 public void calculateFareBikeWithMoreThan30MinutesParkingTime() {
     // Créer une date d'entrée il y a plus de 30 minutes
@@ -223,4 +246,6 @@ public void calculateFareBikeWithMoreThan30MinutesParkingTime() {
     assertTrue(ticket.getPrice() > 0);
 }
 
+ 
+  
 }
