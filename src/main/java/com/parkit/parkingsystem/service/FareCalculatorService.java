@@ -4,8 +4,12 @@ import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
+    
+private static final int FREE_PARKING_DURATION = 30;  
+    
 
-    /*
+/*   Methode initiale
+
     public void calculateFare(Ticket ticket){
         if( (ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime())) ){
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
@@ -30,10 +34,9 @@ public class FareCalculatorService {
         }
     }
 
-*/
-    
-  /*
-    public void calculateFare(Ticket ticket){
+// correction de la methode initiale
+
+public void calculateFare(Ticket ticket){
         
         final int MINUTES_PER_HOUR = 60;
         final double MILLISECONDS_PER_MINUTE = 1000.0 * 60.0;
@@ -59,12 +62,11 @@ public class FareCalculatorService {
         default: throw new IllegalArgumentException("Unknown Parking Type");
     }
 }
-    
     */
-    
-        private static final int FREE_PARKING_DURATION = 30; 
-    
-    public void calculateFare(Ticket ticket) {
+
+// Prise en compte du 30 minutes gratuites 
+
+        public void calculateFare(Ticket ticket) {
         
          final int MINUTES_PER_HOUR = 60;
         final double MILLISECONDS_PER_MINUTE = 1000.0 * 60.0;
@@ -94,6 +96,8 @@ public class FareCalculatorService {
             }
         }
     }
+
+
 
     
 }
