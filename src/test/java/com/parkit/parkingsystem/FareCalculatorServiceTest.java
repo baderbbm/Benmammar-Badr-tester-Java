@@ -245,6 +245,31 @@ public void calculateFareBikeWithMoreThan30MinutesParkingTime() {
     // Vérifier que le prix calculé est supérieur à 0
     assertTrue(ticket.getPrice() > 0);
 }
+   @Test
+    public void calculateFareCarWithDiscount() {
+        Date inTime = new Date(System.currentTimeMillis() - (60 * 60 * 1000));
+        Date outTime = new Date();
+        Ticket ticket = new Ticket();
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
+        ticket.setInTime(inTime);
+        ticket.setOutTime(outTime);
+        fareCalculatorService.calculateFare(ticket, true);
+        double expectedPrice = Fare.CAR_RATE_PER_HOUR * 0.95;
+        assertEquals(expectedPrice, ticket.getPrice());
+    }
+    
+        @Test
+        public void calculateFareBikeWithDiscount() {
+        Date inTime = new Date(System.currentTimeMillis() - (60 * 60 * 1000));
+        Date outTime = new Date();
+        Ticket ticket = new Ticket();
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.BIKE, false));
+        ticket.setInTime(inTime);
+        ticket.setOutTime(outTime);
+        fareCalculatorService.calculateFare(ticket, true);
+        double expectedPrice = Fare.BIKE_RATE_PER_HOUR * 0.95;
+        assertEquals(expectedPrice, ticket.getPrice());
+    }
 
  
   
