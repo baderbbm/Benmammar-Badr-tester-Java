@@ -62,7 +62,7 @@ public void calculateFare(Ticket ticket){
         default: throw new IllegalArgumentException("Unknown Parking Type");
     }
 }
-    */
+    
 
 // Prise en compte du 30 minutes gratuites 
 
@@ -97,6 +97,50 @@ public void calculateFare(Ticket ticket){
         }
     }
 
+*/
+// Prise en compte des utilisateurs récurrents 
+
+    public void calculateFare(Ticket ticket, boolean discount) {
+    final int MINUTES_PER_HOUR = 60;
+    final double MILLISECONDS_PER_MINUTE = 1000.0 * 60.0;
+    
+    if (ticket.getOutTime() == null || ticket.getOutTime().before(ticket.getInTime())) {
+        throw new IllegalArgumentException("Out time provided is incorrect: " + ticket.getOutTime());
+    }
+    
+    long inPark = ticket.getInTime().getTime();
+    long outPark = ticket.getOutTime().getTime(); 
+    long durationInMillis = outPark - inPark;
+    double durationInMinutes = durationInMillis / MILLISECONDS_PER_MINUTE;
+    
+    if (durationInMinutes <= FREE_PARKING_DURATION) {
+        ticket.setPrice(0); // Retourne un prix de 0 pour une durée inférieure ou égale à 30 minutes
+    } else {
+        switch (ticket.getParkingSpot().getParkingType()) {
+            case CAR: {
+                double ratePerHour = Fare.CAR_RATE_PER_HOUR;
+                if (discount) {
+                    ratePerHour *= 0.95; // Applique une réduction de 5% si discount est true
+                }
+                ticket.setPrice((durationInMinutes / MINUTES_PER_HOUR) * ratePerHour);
+                break;
+            }
+            case BIKE: {
+                double ratePerHour = Fare.BIKE_RATE_PER_HOUR;
+                if (discount) {
+                    ratePerHour *= 0.95; // Applique une réduction de 5% si discount est true
+                }
+                ticket.setPrice((durationInMinutes / MINUTES_PER_HOUR) * ratePerHour);
+                break;
+            }
+            default: throw new IllegalArgumentException("Unknown Parking Type");
+        }
+    }
+}
+
+    public void calculateFare(Ticket ticket) { 
+    calculateFare(ticket, false);
+}
 
 
     
