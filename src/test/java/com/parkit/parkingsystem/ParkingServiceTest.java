@@ -75,7 +75,8 @@ public class ParkingServiceTest {
         verify(ticketDAO, times(1)).getNbTicket(anyString());
     }
 
-/*
+// Test de l’appel de la méthode processIncomingVehicle() où tout se déroule comme attendu
+    /*
     @Test
     public void testProcessIncomingVehicle() { 
         when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(1);
@@ -84,7 +85,9 @@ public class ParkingServiceTest {
         verify(ticketDAO, times(1)).saveTicket(any(Ticket.class));
     }
 
-
+// Exécution du test dans le cas où la méthode updateTicket() de ticketDAO 
+// renvoie false lors de l’appel de processExitingVehicle()
+    
     @Test
     public void processExitingVehicleTestUnableUpdate() {
         when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(false);
@@ -92,6 +95,10 @@ public class ParkingServiceTest {
     verify(parkingSpotDAO, times(0)).updateParking(any(ParkingSpot.class));
     }
 
+    
+    // Test de l’appel de la méthode getNextParkingNumberIfAvailable() avec 
+    // pour résultat l’obtention d’un spot dont l’ID est 1 et qui est disponible.
+    
    @Test
    public void testGetNextParkingNumberIfAvailable() {
     when(parkingSpotDAO.getNextAvailableSlot(any (ParkingType.class))).thenReturn(1);
@@ -102,6 +109,9 @@ public class ParkingServiceTest {
     assertTrue(result.isAvailable());
     }
 
+    // Test de l’appel de la méthode getNextParkingNumberIfAvailable() avec 
+    // pour résultat aucun spot disponible (la méthode renvoie null).
+    
     @Test
     public void testGetNextParkingNumberIfAvailableParkingNumberNotFound() {
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(-1);
@@ -109,6 +119,9 @@ public class ParkingServiceTest {
         assertNull(result);
     }
     
+    //  Test de l’appel de la méthode getNextParkingNumberIfAvailable() avec pour 
+    // résultat aucun spot (la méthode renvoie null) car l’argument saisi par l’utilisateur 
+    // concernant le type de véhicule est erroné (par exemple, l’utilisateur a saisi 3.
     
     @Test
     public void testGetNextParkingNumberIfAvailableParkingNumberWrongArgument() throws Exception {
