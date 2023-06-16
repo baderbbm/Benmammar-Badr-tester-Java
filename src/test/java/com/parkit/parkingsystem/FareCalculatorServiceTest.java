@@ -254,7 +254,7 @@ public void calculateFareBikeWithMoreThan30MinutesParkingTime() {
         ticket.setInTime(inTime);
         ticket.setOutTime(outTime);
         fareCalculatorService.calculateFare(ticket, true);
-        double expectedPrice = Fare.CAR_RATE_PER_HOUR * 0.95;
+        double expectedPrice = Fare.CAR_RATE_PER_HOUR * FareCalculatorService.DISCOUNT_FACTOR;
         assertEquals(expectedPrice, ticket.getPrice());
     }
     
@@ -267,7 +267,7 @@ public void calculateFareBikeWithMoreThan30MinutesParkingTime() {
         ticket.setInTime(inTime);
         ticket.setOutTime(outTime);
         fareCalculatorService.calculateFare(ticket, true);
-        double expectedPrice = Fare.BIKE_RATE_PER_HOUR * 0.95;
+        double expectedPrice = Fare.BIKE_RATE_PER_HOUR * FareCalculatorService.DISCOUNT_FACTOR;
         assertEquals(expectedPrice, ticket.getPrice());
     }
 
