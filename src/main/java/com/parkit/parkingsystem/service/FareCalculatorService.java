@@ -6,7 +6,11 @@ import com.parkit.parkingsystem.model.Ticket;
 public class FareCalculatorService {
     
 private static final int FREE_PARKING_DURATION = 30;  
+final static int MINUTES_PER_HOUR = 60;
+final static double MILLISECONDS_PER_MINUTE = 1000.0 * 60.0;
+final static public double DISCOUNT_FACTOR = 0.95;
     
+    /// ajouter une constatante
 
 /*   Methode initiale
 
@@ -101,8 +105,7 @@ public void calculateFare(Ticket ticket){
 // Prise en compte des utilisateurs récurrents 
 
     public void calculateFare(Ticket ticket, boolean discount) {
-    final int MINUTES_PER_HOUR = 60;
-    final double MILLISECONDS_PER_MINUTE = 1000.0 * 60.0;
+    
     
     if (ticket.getOutTime() == null || ticket.getOutTime().before(ticket.getInTime())) {
         throw new IllegalArgumentException("Out time provided is incorrect: " + ticket.getOutTime());
@@ -120,7 +123,7 @@ public void calculateFare(Ticket ticket){
             case CAR: {
                 double ratePerHour = Fare.CAR_RATE_PER_HOUR;
                 if (discount) {
-                    ratePerHour *= 0.95; // Applique une réduction de 5% si discount est true
+                    ratePerHour *= DISCOUNT_FACTOR; // Applique une réduction de 5% si discount est true
                 }
                 ticket.setPrice((durationInMinutes / MINUTES_PER_HOUR) * ratePerHour);
                 break;
@@ -128,7 +131,7 @@ public void calculateFare(Ticket ticket){
             case BIKE: {
                 double ratePerHour = Fare.BIKE_RATE_PER_HOUR;
                 if (discount) {
-                    ratePerHour *= 0.95; // Applique une réduction de 5% si discount est true
+                    ratePerHour *= DISCOUNT_FACTOR; // Applique une réduction de 5% si discount est true
                 }
                 ticket.setPrice((durationInMinutes / MINUTES_PER_HOUR) * ratePerHour);
                 break;
