@@ -1,80 +1,63 @@
 package com.parkit.parkingsystem.integration;
 
-import com.parkit.parkingsystem.config.DataBaseConfig;
-
+import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.model.*;
 import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
 import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
-import com.parkit.parkingsystem.model.ParkingSpot;
-import com.parkit.parkingsystem.model.Ticket;
-import com.parkit.parkingsystem.service.FareCalculatorService;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-
-
-
-
-
+import java.sql.*;
 import java.util.Date;
-
 import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
-
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import org.mockito.Mock;
 
+import org.mockito.Mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ParkingDataBaseIT {
 
-    private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
+    private static final DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
     private static ParkingSpotDAO parkingSpotDAO;
     private static TicketDAO ticketDAO;
     private static DataBasePrepareService dataBasePrepareService;
-    private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
-
-    private static DataBaseConfig dataBaseConfig;
-    private static Connection connection;
-
-    private static InputStream originalInput;
-    private static PrintStream originalOutput;
 
     @Mock
     private static InputReaderUtil inputReaderUtil;
+    
+    @Mock
+    private static Connection connection;
+    
+    @Mock
+    private static PreparedStatement  preparedStatement;
+    
+    @Mock
+    private static ResultSet resultSet;
 
-    @BeforeAll
-    private static void setUp() throws Exception {
-        inputReaderUtil = new InputReaderUtil();
-        originalInput = System.in;
-        originalOutput = System.out;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
+    @BeforeAll 
+    private static void setUp() throws Exception{ 
         parkingSpotDAO = new ParkingSpotDAO();
         parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
         ticketDAO = new TicketDAO();
@@ -84,21 +67,17 @@ public class ParkingDataBaseIT {
 
     @BeforeEach
     private void setUpPerTest() throws Exception {
-
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
         dataBasePrepareService.clearDataBaseEntries();
-        dataBaseConfig = new DataBaseConfig();
     }
 
     @AfterAll
-    private static void tearDown() {
-        System.setIn(originalInput);
-        System.setOut(originalOutput);
-        if (connection != null) {
-            dataBaseConfig.closeConnection(connection);
-        }
+    private static void tearDown(){
+
     }
+
+   
 
     /*
     @Test
@@ -209,18 +188,44 @@ public class ParkingDataBaseIT {
             e.printStackTrace();
         }
     }
-
-   /*
-    @Test
-    public void testGetConnection() throws SQLException {
-        try {
-            connection = dataBaseConfig.getConnection();
-            assertNotNull(connection);
-            assertFalse(connection.isClosed());
-        } catch (ClassNotFoundException | SQLException e) {
-            fail("Exception thrown: " + e.getMessage());
-        }
+    
+    
+   
+@Test
+    public void testSaveTicket() throws Exception {
+        Ticket ticket = new Ticket();
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
+        ticket.setVehicleRegNumber("ABCDEF");
+        ticket.setPrice(10.0);
+        ticket.setInTime(new Timestamp(System.currentTimeMillis()));
+       when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.execute()).thenReturn(true);
+        assertEquals(true, ticketDAO.saveTicket(ticket));
     }
 
-    */
+    @Test
+    public void testGetTicket() throws SQLException, ClassNotFoundException {
+      //  when(dataBaseTestConfig.getConnection()).thenReturn(connection);
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getInt(anyInt())).thenReturn(1);
+        when(resultSet.getString(anyInt())).thenReturn("ABCDEF");
+        when(resultSet.getDouble(anyInt())).thenReturn(10.0);
+        when(resultSet.getTimestamp(anyInt())).thenReturn(new Timestamp(System.currentTimeMillis()));
+        String vehicleRegNumber = "ABCDEF";
+        assertNotNull(ticketDAO.getTicket(vehicleRegNumber));
+    }
+    
+    @Test
+    public void testUpdateTicket() throws SQLException, ClassNotFoundException {
+        when(connection.prepareStatement(DBConstants.UPDATE_TICKET)).thenReturn(preparedStatement);
+        when(preparedStatement.execute()).thenReturn(true);  
+        Ticket ticket = new Ticket();
+        ticket.setPrice(10.0);
+        ticket.setOutTime(new Date());
+        ticket.setId(1);
+        assertEquals(true, ticketDAO.updateTicket(ticket));
+    }
+
 }
