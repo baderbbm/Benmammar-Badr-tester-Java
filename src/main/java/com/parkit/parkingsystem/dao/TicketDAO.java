@@ -19,6 +19,9 @@ public class TicketDAO {
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
+   
+    // prend en paramètre un objet Ticket et insère les informations de ce ticket dans la base de données
+    
     public boolean saveTicket(Ticket ticket){
         Connection con = null;
         try {
@@ -40,6 +43,14 @@ public class TicketDAO {
         }
     }
 
+    /*
+    récupère les informations d'un ticket de stationnement 
+    pour un numéro d'immatriculation de véhicule spécifié, 
+    en sélectionnant les colonnes nécessaires des tables ticket et parking. 
+    Les résultats sont triés par ordre croissant de l'heure d'entrée (IN_TIME) 
+    et seuls les premiers résultats (limités à un) sont renvoyés.
+    */
+    
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
@@ -69,6 +80,10 @@ public class TicketDAO {
         }
     }
 
+    
+    // met à jour les informations d'un ticket de stationnement dans la base de données, 
+    // en utilisant les informations de l'objet Ticket passé en paramètre
+    
     public boolean updateTicket(Ticket ticket) {
         Connection con = null;
         try {
@@ -86,4 +101,27 @@ public class TicketDAO {
         }
         return false;
     }
+    
+    // compter le nombre de tickets associés à un numéro d'immatriculation de véhicule
+    public int getNbTicket(String vehicleRegNumber) {
+    Connection con = null;
+    int count = 0;
+    try {
+        con = dataBaseConfig.getConnection();
+        PreparedStatement ps = con.prepareStatement(DBConstants.GET_NB_TICKET);
+        ps.setString(1, vehicleRegNumber);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            count = rs.getInt(1);
+        }
+        dataBaseConfig.closeResultSet(rs);
+        dataBaseConfig.closePreparedStatement(ps);
+    } catch (Exception ex) {
+        logger.error("Error counting tickets", ex);
+    } finally {
+        dataBaseConfig.closeConnection(con);
+    }
+    return count;
+}
+
 }
