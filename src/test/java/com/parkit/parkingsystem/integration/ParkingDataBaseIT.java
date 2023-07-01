@@ -128,6 +128,7 @@ public class ParkingDataBaseIT {
     public void testParkingLotExitRecurringUser() {
             ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
             parkingService.processIncomingVehicle();
+            parkingService.processExitingVehicle();
             // Simuler un utilisateur récurrent en ayant déjà un ticket dans la base de données
             Ticket existingTicket = new Ticket();
             existingTicket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
