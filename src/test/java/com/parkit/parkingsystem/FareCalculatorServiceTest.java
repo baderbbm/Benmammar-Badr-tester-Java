@@ -192,7 +192,7 @@ public class FareCalculatorServiceTest {
     est supérieur à 30 minutes et que le prix calculé est strictement supérieur à 0.
 */
     
-    
+@Test    
 public void calculateFareCarWithMoreThan30MinutesParkingTime() {
     // Créer une date d'entrée il y a plus de 30 minutes
     Date inTime = new Date(System.currentTimeMillis() - (31 * 60 * 1000));
@@ -222,7 +222,7 @@ public void calculateFareCarWithMoreThan30MinutesParkingTime() {
     est supérieur à 30 minutes et que le prix calculé est strictement supérieur à 0.
 */
    
-
+@Test
 public void calculateFareBikeWithMoreThan30MinutesParkingTime() {
     // Créer une date d'entrée il y a plus de 30 minutes
     Date inTime = new Date(System.currentTimeMillis() - (31 * 60 * 1000));
@@ -275,7 +275,4 @@ public void calculateFareBikeWithMoreThan30MinutesParkingTime() {
         double expectedPrice = Fare.BIKE_RATE_PER_HOUR * FareCalculatorService.DISCOUNT_FACTOR;
         assertEquals(expectedPrice, ticket.getPrice());
     }
-
- 
-  
 }
